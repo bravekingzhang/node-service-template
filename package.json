@@ -1,0 +1,27 @@
+{
+  "name": "brzhang-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "brzhang",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.14.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-json-error": "^3.1.2",
+    "koa-parameter": "^3.0.1",
+    "koa-router": "^12.0.0",
+    "mongoose": "^6.8.0",
+    "typescript": "^4.9.4"
+  },
+  "scripts": {
+    "dev":"gulp dev",
+    "build":"gulp build-ts"
+  },
+  "devDependencies": {
+    "@types/koa-json-error": "^3.1.4",
+    "@types/koa-router": "^7.4.4",
+    "@types/node": "^18.11.17",
+    "gulp": "^4.0.2",
+    "gulp-typescript": "^6.0.0-alpha.1"
+  }
+}
