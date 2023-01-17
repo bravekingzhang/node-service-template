@@ -18,15 +18,22 @@ router
   .post(tokenController.getPath("add"), tokenController.add)
   .get(tokenController.getPath(`select`), tokenController.find)
   .post(tokenController.getPath(`remove`), tokenController.delete)
-  .post(tokenController.getPath(`update`), tokenController.update);
+  .post(tokenController.getPath(`update`), tokenController.update)
+  .get(tokenController.getPath(`selectAll`), tokenController.findAll);
 
-router.post(questionController.getPath("sync"), questionController.sync);
+router
+  .post(questionController.getPath("upload"), questionController.upload)
+  .post(questionController.getPath("download"), questionController.download)
+  .get(questionController.getPath(`selectAll`), questionController.selectAll);
 
 router.post(
   "/auth",
   passport.authenticate("jwt", { session: false }),
   async (ctx) => {
-    ctx.body = "auth";
+    ctx.body = JSON.stringify({
+      code: 0,
+      message: "your token is valid",
+    });
   }
 );
 

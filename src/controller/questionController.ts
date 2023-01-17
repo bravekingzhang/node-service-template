@@ -5,24 +5,52 @@ class QuestionController {
   getPath(name: string): string {
     return `/${this.prefix}/${name}`;
   }
-  async sync(ctx: any, _next: any) {
+
+  async selectAll(ctx: any, _next: any) {
+    const data = await Question.find();
+    ctx.response.body = JSON.stringify(data);
+  }
+  async upload(ctx: any, _next: any) {
     ctx.verifyParams({
-      version: { type: "int", required: true },
+      username: { type: "string", required: true },
       questions: { type: "string", required: true },
     });
-    const { version, questions } = ctx.request.body;
-    let question = await Question.findOne();
+    const { username, questions } = ctx.request.body;
+    let question = await Question.findOne({ username }).exec();
     if (!question) {
-      question = await new Question({ version: 0, questions: "[]" }).save();
+      //初次同步逻辑
+      question = await new Question({
+        username,
+        questions: questions,
+      }).save();
+      ctx.response.body = JSON.stringify({
+        code: 0,
+        message: "questions has been upload to cloud successfully",
+      });
+      return;
     }
-    if (question.version > version) {
-    } else if (question.version == version) {
-    } else {
-    }
-
-    // const [err, data] = await to(new Question({ token, userId }).save());
-    // if (err) return ctx.throw(500, err);
-    // ctx.response.body = data;
+    //表示云端落后于本地，需要更新
+    const [err, data] = await to(
+      Question.updateOne({ username }, { $set: { questions } }).exec()
+    );
+    if (err) return ctx.throw(500, err);
+    ctx.response.body = JSON.stringify({
+      code: 0,
+      message: "questions has been upload to cloud successfully",
+    });
+  }
+  async download(ctx: any, _next: any) {
+    ctx.verifyParams({
+      username: { type: "string", required: true },
+    });
+    const { username } = ctx.request.body;
+    let question = await Question.findOne({ username }).exec();
+    //表示云端落后于本地，需要更新
+    ctx.response.body = JSON.stringify({
+      code: 0,
+      questions: question?.questions,
+      message: "questions has been download from cloud successfully",
+    });
   }
 }
 

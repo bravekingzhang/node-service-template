@@ -13,14 +13,22 @@ class TokenController {
     const { userId, token } = ctx.request.body;
     const [err, data] = await to(new Token({ token, userId }).save());
     if (err) return ctx.throw(500, err);
-    ctx.response.body = data;
+    ctx.response.body = JSON.stringify({
+      code: 0,
+      message: "token successfully added",
+    });
   }
   async find(ctx: any, _next: any) {
     ctx.verifyParams({
       userId: { type: "string", required: true },
     });
-    const { userId } = ctx.request.body;
-    const data = await Token.findOne({ $set: { userId } });
+    console.log(ctx.request.body);
+    const { userId } = ctx.request.query; // get 请求在query中
+    const data = await Token.findOne({ userId }).exec();
+    ctx.response.body = JSON.stringify(data);
+  }
+  async findAll(ctx: any, _next: any) {
+    const data = await Token.find();
     ctx.response.body = JSON.stringify(data);
   }
   async delete(ctx: any, _next: any) {
